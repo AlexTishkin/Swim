@@ -1,10 +1,13 @@
-package com.swimgame.swim;
+package com.swimgame.swim.screens;
 
 import android.graphics.Color;
 import com.swimgame.base.Game;
 import com.swimgame.base.Graphics;
 import com.swimgame.base.Input;
 import com.swimgame.base.Screen;
+import com.swimgame.swim.Assets;
+import com.swimgame.swim.Settings;
+
 import java.util.List;
 
 // Экран: Таблица лучших результатов

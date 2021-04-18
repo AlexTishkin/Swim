@@ -1,9 +1,11 @@
-package com.swimgame.swim;
+package com.swimgame.swim.screens;
 
 import com.swimgame.base.Game;
 import com.swimgame.base.Graphics;
 import com.swimgame.base.Pixmap;
 import com.swimgame.base.Screen;
+import com.swimgame.swim.Assets;
+import com.swimgame.swim.Settings;
 
 // Загрузка необходимых ресурсов
 

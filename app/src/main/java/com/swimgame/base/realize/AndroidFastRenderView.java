@@ -32,13 +32,13 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         while (running) {
             if (!holder.getSurface().isValid())
                 continue;
-            float deltaTime = (System.nanoTime() - startTime) / 1000000000.0f;  // Отслеживание дельты времени между кадрами
+            float deltaTime = (System.nanoTime() - startTime) / 1000000000.0f;// Отслеживание дельты времени между кадрами
             startTime = System.nanoTime();                                    // Обновление времени итерации для дельты
             game.getCurrentScreen().update(deltaTime);                        // Обновление на основе дельты
             game.getCurrentScreen().present(deltaTime);                       // Представление на основе дельты
             Canvas canvas = holder.lockCanvas();                              // Удерживаем канву для SurfaceView
             canvas.getClipBounds(dstRect);                                    // Получаем треугольник, растянутый на весь Surface
-            canvas.drawBitmap(framebuffer, null, dstRect, null);              // Отрисовка искусственного буфера(автомасштаб)
+            canvas.drawBitmap(framebuffer, null, dstRect, null);    // Отрисовка искусственного буфера(автомасштаб)
             holder.unlockCanvasAndPost(canvas);
         }
     }

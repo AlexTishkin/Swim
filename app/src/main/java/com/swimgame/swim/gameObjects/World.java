@@ -1,50 +1,59 @@
-package com.swimgame.swim;
+package com.swimgame.swim.gameObjects;
 
-// Логическая модель мира
+import com.swimgame.swim.Assets;
+import com.swimgame.swim.Settings;
 
 import java.util.Random;
 
+// Логическая модель мира
 public class World {
-    // КОНСТАНТЫ МИРА
     public static final int WORLD_HEIGHT = 5;                         // 5 линий, где можно плыть
     public static final int ENEMY_COUNT = 4;                          // Количество врагов
     public static final int SCORE_TICK = 40;                          // Количество тиков для добавления очков x2
     public static final int SCORE_INCREMENT = 10;                     // Значение, на которое будет увеличиваться счет за проплытие
-    public static final float TICK_INITIAL = 0.0040f;                 // Начальный временной интервал, используемый для движения объектов 0.0240f;
+
+    public static final float TICK_INITIAL = 0.0040f;               // Начальный временной интервал, используемый для движения объектов 0.0240f;
     public static final float TICK_DECREMENT = 0.00005f;              // Значение, на которое будет уменьшаться тик(увеличение скорости)
 
-
     // ИГРОВЫЕ ОБЪЕКТЫ
-    public MainFish mainFish;                                            // Главный герой игры
-    public EnemyFish[] enemyFish;                                    // Враги // Верхние три полосы
-    public EnemyFish[] enemyFish2;                                   // Враги // Нижние две полосы
+    public MainFish mainFish;       // Главный герой игры
+    public EnemyFish[] enemyFish;   // Враги // Верхние три полосы
+    public EnemyFish[] enemyFish2;  // Враги // Нижние две полосы
 
-    public Coin[] coins;                                        // Монетки -> 3 монетки
+    public Coin[] coins;    // Монетки -> 3 монетки
 
     public boolean enemyMode = false;                                 // Мод: добавление врагов(для первого экрана false)
     public boolean gameOver = false;                                  // Флаг, закончена ли игра
     public int score = 0;                                             // Текущий счет
     public int coinsCount = 0;                                        // Текущее количество монет
-    public int coinsState = 0;                                        // Состояние монет -> Прибавка к очкам [100 - 200 - 300]
+    public int coinsState = 1;                                        // Состояние монет -> Прибавка к очкам [100 - 200 - 300]
     float tickTime = 0;                                               // Счетчик времени, к которой будем прибавлять дельту
     static float tick = TICK_INITIAL;                                 // Скорость движения игровых объектов
     public int scoreTick;                                             // Тики для добавления очков
 
-
     private Random random;                                            // Для генерации чисел
 
-    public int[] backgrounds_x = {0, 960, 960 * 2, 960 * 3, 960 * 4,
-            960 * 5, 960 * 6, 960 * 7, 960 * 8};                      // Координаты картинок фона
-
+    // Координаты картинок фона
+    public int[] backgrounds_x = {
+            0,
+            960,
+            960 * 2,
+            960 * 3,
+            960 * 4,
+            960 * 5,
+            960 * 6,
+            960 * 7,
+            960 * 8
+    };
 
     public World() {
         tick = TICK_INITIAL;
         scoreTick = SCORE_TICK;
-        this.score = 0; //0
+        this.score = 0;
         this.coinsCount = 0;
         coinsState = 1;
-        mainFish = new MainFish();                                    // Главный герой
-        initEnemyFishs();                                             // Вражеские рыбки
+        mainFish = new MainFish();  // Главный герой
+        initEnemyFishes();           // Вражеские рыбки
 
         coins = new Coin[10];
 
@@ -65,10 +74,11 @@ public class World {
     }
 
 
-    public void update(float deltaTime) {                              // Обновление мира и всех объектов в нем(по дельте)
+    // Обновление мира и всех объектов в нем(по дельте)
+    public void update(float deltaTime) {
         if (gameOver)
             return;                                         // Проверка, не окончена ли игра
-        tickTime += deltaTime;                                         // Прибавляем дельту к счетчику(для равномерной смены кадров)
+        tickTime += deltaTime;                              // Прибавляем дельту к счетчику(для равномерной смены кадров)
 
         while (tickTime > tick) {                                      // Обновлять столько tick, сколько накопилось [ПРИЕМ]
             tickTime -= tick;                                          // Отнимаем tick от счетчика
@@ -76,13 +86,13 @@ public class World {
             moveBackground();                                          // Анимация фона
             mainFish.update();                                         // Анимация рыбки
 
-            // ЩА РЫБЫ БУДУТ СТОЯТЬ НА МЕСТЕ !!!!ХУЕТА!!!!!!
+            // ЩА РЫБЫ БУДУТ СТОЯТЬ НА МЕСТЕ
             if (isClash()) {
-                if (mainFish.isProtected) {
+                if (mainFish.isProtectedViaBubble) {
                     if (Settings.soundEnabled) Assets.click.play(1);    // Звук разрыва пузыря
-                    mainFish.isProtected = false;
-                }
-                else{
+                    mainFish.isProtectedViaBubble = false;
+                    this.coinsState = 1;
+                } else {
                     gameOver = true;
                     return;
                 }
@@ -101,47 +111,48 @@ public class World {
 
                 }
 
-                for (int i = 0; i < 10; i++) {                 // animationCoin
+                // animationCoin
+                for (int i = 0; i < 10; i++) {
 
                     if (!coins[i].isChecked && mainFish.line == coins[i].line &&
-                            mainFish.x + 128 >= coins[i].x + 20 && mainFish.x <= coins[i].x + 60  ) {   // isClashCoin -> После
-                        if (Settings.soundEnabled) Assets.click.play(1);        // Звук того, что монета чекнута
+                            mainFish.x + 128 >= coins[i].x + 20 && mainFish.x <= coins[i].x + 60) {   // isClashCoin -> После
+                        if (Settings.soundEnabled)
+                            Assets.click.play(1);        // Звук того, что монета чекнута
                         coins[i].check(); // Монетка чекнута
 
-                        if (coins[i].color == Coin.COLOR_YELLOW) this.coinsCount++ ; else// Добавление в счетчик монет
-                            if (coins[i].color == Coin.COLOR_GREEN)  this.coinsCount+=3; else// Добавление в счетчик монет
-                                if (coins[i].color == Coin.COLOR_RED)    this.coinsCount+=5; // Добавление в счетчик монет
+                        if (coins[i].color == Coin.COLOR_YELLOW) this.coinsCount++;
+                        if (coins[i].color == Coin.COLOR_GREEN) this.coinsCount += 3;
+                        if (coins[i].color == Coin.COLOR_RED) this.coinsCount += 5;
 
-
-                        if (this.coinsCount >= 50){
+                        if (coinsCount >= 50) {
                             coinsCount = 0;
-                            mainFish.isProtected = true; // Защита
-                            score += 10 * coinsState;
-
-                        } else
-                        if (this.coinsCount >= 99){
-                            coinsCount = 0;
-                            if (!mainFish.isProtected) mainFish.isProtected = true; else
-                                score += 15 * coinsState;
-
-                            // add Bubble around mainFish
-                            if (coinsState < 10) coinsState ++; // Увеличение состояния на 1 -> Прибавка в очках
+                            coinsState++;
+                            score += 100 * Math.min(coinsState, 5);
+                            mainFish.isProtectedViaBubble = true;
                         }
-
-
                     }
 
                     if (coins[i].x == -240) {
                         coins[i].x = 970; // recreateCoin
                         coins[i].isChecked = false;
 
-                        switch (random.nextInt(40)){
-                            case 19: coins[i].color = Coin.COLOR_RED; break;
+                        switch (random.nextInt(40)) {
+                            case 19:
+                                coins[i].color = Coin.COLOR_RED;
+                                break;
 
-                            case 18: case 17: case 16: case 15: case 5:
-                            case 4: coins[i].color = Coin.COLOR_GREEN; break;
+                            case 18:
+                            case 17:
+                            case 16:
+                            case 15:
+                            case 5:
+                            case 4:
+                                coins[i].color = Coin.COLOR_GREEN;
+                                break;
 
-                            default:coins[i].color = Coin.COLOR_YELLOW; break;
+                            default:
+                                coins[i].color = Coin.COLOR_YELLOW;
+                                break;
                         }
 
                         if (i < 6) coins[i].line = random.nextInt(3) + 1;
@@ -151,18 +162,16 @@ public class World {
                 }
 
 
-
-
                 addScore();                                                // Добавление очков
-
-                /**********************************************************************************************/
             }
-        } // Если EnemyMode
+        }
     }
 
-    public void initEnemyFishs() {
+    // Базовая инициализация вражеских рыбок
+    public void initEnemyFishes() {
         random = new Random();
         enemyFish = new EnemyFish[ENEMY_COUNT];
+
         enemyFish[0] = new EnemyFish(960);
         enemyFish[0].type = EnemyFish.TYPE_ENEMY1;
         enemyFish[0].line = random.nextInt(3) + 1;
@@ -206,8 +215,9 @@ public class World {
         enemyFish2[3].type = EnemyFish.TYPE_ENEMY1;
         enemyFish2[3].line = random.nextInt(2) + 4;
         enemyFish2[3].isShark = false;
-    }    // Базовая инициализация вражеских рыбок
+    }
 
+    // Движение фонового изображения
     public void moveBackground() {
         for (int i = 0; i < 9; i++) {
             backgrounds_x[i]--; // Сдвиг
@@ -215,8 +225,9 @@ public class World {
             if (backgrounds_x[i] <= -960)
                 backgrounds_x[i] = 7680;
         }
-    }   // Движение фонового изображения
+    }
 
+    // Добавление очков
     public void addScore() {
         if (enemyMode) {
             if (scoreTick == 0) {
@@ -224,22 +235,23 @@ public class World {
                 scoreTick = SCORE_TICK;
             } else scoreTick--;
         }
-    }         // Добавление очков
+    }
 
+    // Было ли столкновение
     public boolean isClash() {
         boolean clash = false;
         for (int i = 0; i < ENEMY_COUNT; i++)
             if (enemyFish[i].type == EnemyFish.TYPE_ENEMY1) { // Столкновение с бич-рыбой
                 if (mainFish.line == enemyFish[i].line && mainFish.x < enemyFish[i].x
                         && enemyFish[i].x < mainFish.x + 128 && enemyFish[i].isVisible) {
-                    if (mainFish.isProtected) enemyFish[i].isVisible = false;
+                    if (mainFish.isProtectedViaBubble) enemyFish[i].isVisible = false;
                     clash = true;
                     break;
                 }
             } else if (enemyFish[i].type == EnemyFish.TYPE_ENEMY2) { // Столкновение с акулой
                 if ((mainFish.line == enemyFish[i].line || mainFish.line == enemyFish[i].line + 1) && mainFish.x < enemyFish[i].x
                         && enemyFish[i].x < mainFish.x + 128 && enemyFish[i].isVisible) {
-                    if (mainFish.isProtected) enemyFish[i].isVisible = false;
+                    if (mainFish.isProtectedViaBubble) enemyFish[i].isVisible = false;
                     clash = true;
                     break;
                 }
@@ -250,14 +262,14 @@ public class World {
                 if (enemyFish2[i].type == EnemyFish.TYPE_ENEMY1) { // Столкновение с бич-рыбой
                     if (mainFish.line == enemyFish2[i].line && mainFish.x < enemyFish2[i].x
                             && enemyFish2[i].x < mainFish.x + 128 && enemyFish2[i].isVisible) {
-                        if (mainFish.isProtected) enemyFish2[i].isVisible = false;
+                        if (mainFish.isProtectedViaBubble) enemyFish2[i].isVisible = false;
                         clash = true;
                         break;
                     }
                 } else if (enemyFish2[i].type == EnemyFish.TYPE_ENEMY2) { // Столкновение с акулой
                     if ((mainFish.line == enemyFish2[i].line || mainFish.line == enemyFish2[i].line + 1) && mainFish.x < enemyFish2[i].x
                             && enemyFish2[i].x < mainFish.x + 128 && enemyFish2[i].isVisible) {
-                        if (mainFish.isProtected) enemyFish2[i].isVisible = false;
+                        if (mainFish.isProtectedViaBubble) enemyFish2[i].isVisible = false;
                         clash = true;
                         break;
                     }
@@ -265,16 +277,19 @@ public class World {
         }
 
         return clash;
-    }       // Было ли столкновение
+    }
 
+    // Перемещение удалившейся рыбки//Верх|Низ
     public void recreateEnemy(EnemyFish enemy, boolean isTop) {
         if (enemy.x == -240) { // Пересоздание рыбы [Не меняя вида]
             enemy.x = 970; // Тут можно создавать рыбу
 
             enemy.color = getColorEnemyFish();
 
-            if (enemy.color == EnemyFish.COLOR_RED && enemy.type == EnemyFish.TYPE_ENEMY1) enemy.isTurned = false; // Новая красная рыба - не поворачивала
-            if (!enemy.isVisible && score > 1000) enemy.isVisible = true; // Включаем видимость -> Уже другая рыба
+            if (enemy.color == EnemyFish.COLOR_RED && enemy.type == EnemyFish.TYPE_ENEMY1)
+                enemy.isTurned = false; // Новая красная рыба - не поворачивала
+            if (!enemy.isVisible && score > 1000)
+                enemy.isVisible = true; // Включаем видимость -> Уже другая рыба
 
             if (isTop) enemy.line = random.nextInt(3) + 1;  // Линия та же   -> Первые 2 линии
             else enemy.line = random.nextInt(2) + 4;
@@ -282,48 +297,50 @@ public class World {
 
             if (enemy.isShark) {   // Если есть возможность передислоцироваться в акулу
                 if (!getShark()) enemy.type = EnemyFish.TYPE_ENEMY1; // В рыбу
-                else{                                                // В акулу
+                else {                                                // В акулу
                     enemy.type = EnemyFish.TYPE_ENEMY2;
-                    if (isTop) enemy.line = random.nextInt(2) + 1; // Чтобы не зацепить акулой рыбку с 4 и 5 линии =)
+                    if (isTop)
+                        enemy.line = random.nextInt(2) + 1; // Чтобы не зацепить акулой рыбку с 4 и 5 линии =)
                     else enemy.line = 4;
                 }
             } // if enemy.isShark
         }
-    } // Перемещение удалившейся рыбки//Верх|Низ
+    }
 
-
-    public int getColorEnemyFish(){
+    // Возвращение цвета рыбки в зависимости от очков -> По таблице
+    public int getColorEnemyFish() {
         int returnColor = random.nextInt(2) + 101; // Синяя | Зеленая
         int randValue = 1;
 
-        if (score > 2000 && score < 2500) randValue = random.nextInt(10); else
-        if (score > 2500 && score < 3000) randValue = random.nextInt(8); else
-        if (score > 3000 && score < 4000) randValue = random.nextInt(6); else
-        if (score > 4000 && score < 7500) randValue = random.nextInt(4); else
-        if (score > 7500 && score< 10000) randValue = random.nextInt(3); else
-        if (score >10000 && score< 15000) randValue = random.nextInt(2); else
-        if (score > 15000) randValue = 0;
+        if (score > 2000 && score < 2500) randValue = random.nextInt(10);
+        else if (score > 2500 && score < 3000) randValue = random.nextInt(8);
+        else if (score > 3000 && score < 4000) randValue = random.nextInt(6);
+        else if (score > 4000 && score < 7500) randValue = random.nextInt(4);
+        else if (score > 7500 && score < 10000) randValue = random.nextInt(3);
+        else if (score > 10000 && score < 15000) randValue = random.nextInt(2);
+        else if (score > 15000) randValue = 0;
 
         if (randValue == 0) returnColor = EnemyFish.COLOR_RED;
 
         return returnColor;
-    } // Возвращение цвета рыбки в зависимости от очков -> По таблице
+    }
 
-    public boolean getShark(){
+    // Перевоплощение в акулу в зависимости от очков -> По таблице
+    public boolean getShark() {
         boolean returnValue = false;  // default - none
         int randValue = 1;
 
-        if (score > 2000 && score < 3000) randValue = random.nextInt(10); else
-        if (score > 3000 && score < 4000) randValue = random.nextInt(8); else
-        if (score > 4000 && score < 7500) randValue = random.nextInt(6); else
-        if (score > 7500 && score< 10000) randValue = random.nextInt(3); else
-        if (score >10000 && score< 12000) randValue = random.nextInt(2); else
-        if (score > 12000) randValue = 0;
+        if (score > 2000 && score < 3000) randValue = random.nextInt(10);
+        else if (score > 3000 && score < 4000) randValue = random.nextInt(8);
+        else if (score > 4000 && score < 7500) randValue = random.nextInt(6);
+        else if (score > 7500 && score < 10000) randValue = random.nextInt(3);
+        else if (score > 10000 && score < 12000) randValue = random.nextInt(2);
+        else if (score > 12000) randValue = 0;
 
         if (randValue == 0) returnValue = true;
 
         return returnValue;
-    } // Перевоплощение в акулу в зависимости от очков -> По таблице
+    }
 
 }
 

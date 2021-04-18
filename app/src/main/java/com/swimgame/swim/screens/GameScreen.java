@@ -1,15 +1,18 @@
-package com.swimgame.swim;
+package com.swimgame.swim.screens;
 
 import android.graphics.Color;
 
 import com.swimgame.base.Game;
 import com.swimgame.base.Graphics;
 import com.swimgame.base.Input;
-import com.swimgame.base.Pixmap;
 import com.swimgame.base.Screen;
+import com.swimgame.swim.Assets;
+import com.swimgame.swim.gameObjects.Coin;
+import com.swimgame.swim.gameObjects.EnemyFish;
+import com.swimgame.swim.Settings;
+import com.swimgame.swim.gameObjects.World;
 
 import java.util.List;
-import java.util.Random;
 
 // В СЛЕД. ВЕРСИИ РЫБА - абстрактный класс [Наследники - mainFIsh и enemyFish]
 
@@ -154,10 +157,9 @@ public class GameScreen extends Screen {
 
         //g.drawPixmap(Assets.coin, g.getWidth()/2 -120, 0);   // Иконка монет
 
-        if (world.coinsState < 2) g.drawPixmap(Assets.coin, g.getWidth() / 2 - 120, 0); else
-        if (world.coinsState >= 2 && world.coinsState < 6) g.drawPixmap(Assets.coin2, g.getWidth() / 2 - 120, 0); else
-            g.drawPixmap(Assets.coin3, g.getWidth() / 2 - 120, 0);
-
+        if (world.coinsState == 1) g.drawPixmap(Assets.coin, g.getWidth() / 2 - 120, 0);
+        else if (world.coinsState == 2) g.drawPixmap(Assets.coin2, g.getWidth() / 2 - 120, 0);
+        else g.drawPixmap(Assets.coin3, g.getWidth() / 2 - 120, 0);
 
         g.drawText(coinsCount, 3, Color.rgb(255, 252, 0));   // Вывод количества монет
 
@@ -176,9 +178,8 @@ public class GameScreen extends Screen {
         // // // // // // // // // /*/
 
 
-
         // Вьюха для отображения кнопок
-        if (Settings.controlEnabled){
+        if (Settings.controlEnabled) {
             if (!upButtonClicked) g.drawPixmap(Assets.up_button, 10, 90);
             else {
                 if (upButtonClickedOk) g.drawPixmap(Assets.up_click1_button, 10, 90);
@@ -208,60 +209,66 @@ public class GameScreen extends Screen {
         g.drawPixmap(Assets.person[world.mainFish.frame], world.mainFish.x,
                 world.mainFish.line * 100 - 7, 0, 0, 128, 93); // Отрисовка главного героя
 
-        if (world.mainFish.isProtected)
-            g.drawPixmap(Assets.protectBubble, world.mainFish.x-5,
+        if (world.mainFish.isProtectedViaBubble)
+            g.drawPixmap(Assets.protectBubble, world.mainFish.x - 5,
                     world.mainFish.line * 100 - 40, 0, 0, 140, 140); // Отрисовка защитного пузырька. если есть
 
         // Отрисовка части монет сзади
-        for (int i = 1; i < 10; i+=2)
-            if (!world.coins[i].isChecked){
+        for (int i = 1; i < 10; i += 2)
+            if (!world.coins[i].isChecked) {
                 // Разноцветные шарики
-                if (world.coins[i].color == Coin.COLOR_YELLOW) g.drawPixmap(Assets.coin, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80); else
-                if (world.coins[i].color == Coin.COLOR_GREEN) g.drawPixmap(Assets.coin2, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80); else
-                if (world.coins[i].color == Coin.COLOR_RED) g.drawPixmap(Assets.coin3, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                if (world.coins[i].color == Coin.COLOR_YELLOW)
+                    g.drawPixmap(Assets.coin, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                else if (world.coins[i].color == Coin.COLOR_GREEN)
+                    g.drawPixmap(Assets.coin2, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                else if (world.coins[i].color == Coin.COLOR_RED)
+                    g.drawPixmap(Assets.coin3, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
             }
 
 
         if (world.enemyMode) // Чтобы при ожидании не было рыбок
             for (int i = 0; i < World.ENEMY_COUNT; i++) {  // Отрисовка врагов
-                if (world.enemyFish[i].isVisible)  drawEnemyFish(world.enemyFish[i]);         // Отрисовка верхних врагов
-                if (world.enemyFish2[i].isVisible) drawEnemyFish(world.enemyFish2[i]);        // Отрисовка нижних врагов
+                if (world.enemyFish[i].isVisible)
+                    drawEnemyFish(world.enemyFish[i]);         // Отрисовка верхних врагов
+                if (world.enemyFish2[i].isVisible)
+                    drawEnemyFish(world.enemyFish2[i]);        // Отрисовка нижних врагов
             }
 
 
         // Отрисовка части монет спереди
-        for (int i = 0; i < 10; i+=2)
-            if (!world.coins[i].isChecked){
+        for (int i = 0; i < 10; i += 2)
+            if (!world.coins[i].isChecked) {
                 // Разноцветные шарики
-                if (world.coins[i].color == Coin.COLOR_YELLOW) g.drawPixmap(Assets.coin, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80); else
-                if (world.coins[i].color == Coin.COLOR_GREEN) g.drawPixmap(Assets.coin2, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80); else
-                if (world.coins[i].color == Coin.COLOR_RED) g.drawPixmap(Assets.coin3, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                if (world.coins[i].color == Coin.COLOR_YELLOW)
+                    g.drawPixmap(Assets.coin, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                else if (world.coins[i].color == Coin.COLOR_GREEN)
+                    g.drawPixmap(Assets.coin2, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
+                else if (world.coins[i].color == Coin.COLOR_RED)
+                    g.drawPixmap(Assets.coin3, world.coins[i].x - 10, world.coins[i].line * 100, 0, 0, 80, 80);
             }
-
 
 
     }
 
-    public void drawEnemyFish(EnemyFish enemyFish){
+    public void drawEnemyFish(EnemyFish enemyFish) {
         Graphics g = game.getGraphics();
         //  if (enemyFish != null && enemyFish.x < 960 && enemyFish.x > -128) { // Проверка на вхождение в экранную область
         if (enemyFish.type == EnemyFish.TYPE_ENEMY1) {
             int color = enemyFish.color;
 
-            switch (color){ // Отрисовка рыбок в зависимости от цвета
-                case EnemyFish.COLOR_RED   :
+            switch (color) { // Отрисовка рыбок в зависимости от цвета
+                case EnemyFish.COLOR_RED:
                     g.drawPixmap(Assets.enemyRed[enemyFish.frame], enemyFish.x - 6, enemyFish.line * 100, 0, 0, 120, 87);
                     break;
-                case EnemyFish.COLOR_GREEN :
+                case EnemyFish.COLOR_GREEN:
                     g.drawPixmap(Assets.enemyGreen[enemyFish.frame], enemyFish.x - 6, enemyFish.line * 100, 0, 0, 120, 87);
                     break;
-                case EnemyFish.COLOR_BLUE  :
+                case EnemyFish.COLOR_BLUE:
                     g.drawPixmap(Assets.enemyBlue[enemyFish.frame], enemyFish.x - 6, enemyFish.line * 100, 0, 0, 120, 87);
                     break;
             }
-        } else
-        if (enemyFish.type == EnemyFish.TYPE_ENEMY2)
-            g.drawPixmap(Assets.enemy2[enemyFish.frame], enemyFish.x, enemyFish.line * 100 , 0, 0, 240, 150);
+        } else if (enemyFish.type == EnemyFish.TYPE_ENEMY2)
+            g.drawPixmap(Assets.enemy2[enemyFish.frame], enemyFish.x, enemyFish.line * 100, 0, 0, 240, 150);
     }  // Отрисовка вражеской рыбки
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

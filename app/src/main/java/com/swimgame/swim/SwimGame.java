@@ -2,6 +2,7 @@ package com.swimgame.swim;
 
 import com.swimgame.base.Screen;
 import com.swimgame.base.realize.AndroidGame;
+import com.swimgame.swim.screens.LoadingScreen;
 
 // Реализация игры: установка стартового экрана
 

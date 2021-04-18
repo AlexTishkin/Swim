@@ -1,7 +1,6 @@
-package com.swimgame.swim;
+package com.swimgame.swim.gameObjects;
 
 // Предмет для сбора - монетка
-
 public class Coin {
     public static final int COLOR_YELLOW = 0;
     public static final int COLOR_GREEN  = 1;
@@ -20,7 +19,5 @@ public class Coin {
 
     public void check(){
         isChecked = true;
-
     }
-
 }
