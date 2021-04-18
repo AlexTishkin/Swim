@@ -7,10 +7,8 @@ public class MainFish extends Fish {
     public boolean isProtectedViaBubble;    // Защита Пузырек -> Один раз + Визуализация
 
     public MainFish() {
-        super();
-        frameTick = 0; // Максимальное значеие тика[Смена при FRAME_TICK]
-        this.line = 2;
-        this.x = 150;
+        line = 2;
+        x = 150;
         isProtectedViaBubble = false;
     }
 
@@ -23,4 +21,30 @@ public class MainFish extends Fish {
         frame = frame + 1 != FRAME_COUNT ? frame + 1 : 0;
         frameTick = 0;
     }
+
+    public boolean isClash(EnemyFish[] topEnemyFish, EnemyFish[] bottomEnemyFish) {
+        return isClash(topEnemyFish) || isClash(bottomEnemyFish);
+    }
+
+    private boolean isClash(EnemyFish[] enemyFishes) {
+        for (EnemyFish enemyFish : enemyFishes) {
+            // Столкновение с бич-рыбой
+            if (enemyFish.type == EnemyFish.TYPE_ENEMY_FISH) {
+                if (line == enemyFish.line && x < enemyFish.x && enemyFish.x < x + 128 && enemyFish.isVisible) {
+                    if (isProtectedViaBubble) enemyFish.isVisible = false;
+                    return true;
+                }
+            }
+            // Столкновение с акулой
+            if (enemyFish.type == EnemyFish.TYPE_ENEMY_SHARK) {
+                if ((line == enemyFish.line || line == enemyFish.line + 1) && x < enemyFish.x && enemyFish.x < x + 128 && enemyFish.isVisible) {
+                    if (isProtectedViaBubble) enemyFish.isVisible = false;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 }

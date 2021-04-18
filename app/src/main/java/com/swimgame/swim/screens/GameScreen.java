@@ -228,10 +228,10 @@ public class GameScreen extends Screen {
 
         if (world.enemyMode) // Чтобы при ожидании не было рыбок
             for (int i = 0; i < World.ENEMY_COUNT; i++) {  // Отрисовка врагов
-                if (world.enemyFish[i].isVisible)
-                    drawEnemyFish(world.enemyFish[i]);         // Отрисовка верхних врагов
-                if (world.enemyFish2[i].isVisible)
-                    drawEnemyFish(world.enemyFish2[i]);        // Отрисовка нижних врагов
+                if (world.topEnemyFish[i].isVisible)
+                    drawEnemyFish(world.topEnemyFish[i]);         // Отрисовка верхних врагов
+                if (world.bottomEnemyFish[i].isVisible)
+                    drawEnemyFish(world.bottomEnemyFish[i]);        // Отрисовка нижних врагов
             }
 
 
@@ -253,7 +253,7 @@ public class GameScreen extends Screen {
     public void drawEnemyFish(EnemyFish enemyFish) {
         Graphics g = game.getGraphics();
         //  if (enemyFish != null && enemyFish.x < 960 && enemyFish.x > -128) { // Проверка на вхождение в экранную область
-        if (enemyFish.type == EnemyFish.TYPE_ENEMY1) {
+        if (enemyFish.type == EnemyFish.TYPE_ENEMY_FISH) {
             int color = enemyFish.color;
 
             switch (color) { // Отрисовка рыбок в зависимости от цвета
@@ -267,7 +267,7 @@ public class GameScreen extends Screen {
                     g.drawPixmap(Assets.enemyBlue[enemyFish.frame], enemyFish.x - 6, enemyFish.line * 100, 0, 0, 120, 87);
                     break;
             }
-        } else if (enemyFish.type == EnemyFish.TYPE_ENEMY2)
+        } else if (enemyFish.type == EnemyFish.TYPE_ENEMY_SHARK)
             g.drawPixmap(Assets.enemy2[enemyFish.frame], enemyFish.x, enemyFish.line * 100, 0, 0, 240, 150);
     }  // Отрисовка вражеской рыбки
 
