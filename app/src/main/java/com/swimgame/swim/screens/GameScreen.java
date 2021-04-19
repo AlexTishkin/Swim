@@ -26,7 +26,7 @@ public class GameScreen extends Screen {
     // Нажаты кнопки вверх/вниз
     private boolean upButtonClicked, downButtonClicked;
     // Можно двигаться
-    private boolean upButtonClickedOk, downButtonClickedOk;
+    private boolean canUpButtonClickedOk, canDownButtonClickedOk;
 
     // Хранение текущего состояния экрана(default =  готовность)
     GameState state = GameState.Ready;
@@ -49,8 +49,8 @@ public class GameScreen extends Screen {
         // Кнопки вверх/вниз (Можно двигаться)
         upButtonClicked = false;
         downButtonClicked = false;
-        upButtonClickedOk = false;
-        downButtonClickedOk = false;
+        canUpButtonClickedOk = false;
+        canDownButtonClickedOk = false;
     }
 
     @Override
@@ -138,67 +138,67 @@ public class GameScreen extends Screen {
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         int len = touchEvents.size();
         for (int i = 0; i < len; i++) {
-            Input.TouchEvent event = touchEvents.get(i);         // Контроллер игры
+            Input.TouchEvent event = touchEvents.get(i);
+            // Контроллер игры
             if (event.type == Input.TouchEvent.TOUCH_UP) {
-                if (yTouch < 80 && event.y < 80) {                 // МЕНЮ
-                    if (event.x < 90) {           // Если нажата клавиша ПАУЗЫ -> состояние ПАУЗА
+                // Верхнее меню
+                if (yTouch < 80 && event.y < 80) {
+                    // Пауза
+                    if (event.x < 90) {
                         if (Settings.soundEnabled) Assets.click.play(1);
                         state = GameState.Paused;
                         return;
                     }
-                    if (event.x > 90 && event.x < 170) {    // Музыка вкл/выкл
-                        Settings.soundEnabled = !Settings.soundEnabled;                               // Инвертируем значение музыки
-                        if (Settings.soundEnabled)
-                            Assets.game_media.play();                          // Музыка (on/off)
+                    // Музыка вкл/выкл
+                    if (event.x > 90 && event.x < 170) {
+                        Settings.soundEnabled = !Settings.soundEnabled;
+                        if (Settings.soundEnabled) Assets.game_media.play();
                         else Assets.game_media.stop();
                         return;
                     }
 
-                } else if (!Settings.controlEnabled) {
-                    //** Контроллер игры[SWIM]                   ПЕРВЫЙ ВИД УПРАВЛЕНИЯ
-                    if (event.y - yTouch > 0) {                         // можн еще добавить звук бульк
-                        world.mainFish.toDown();
-                    } else if (yTouch - event.y > 0) {
-                        world.mainFish.toUp();
-                    }
+                }
+                // Управление 2 - Тач
+                else if (!Settings.controlEnabled) {
+                    if (event.y - yTouch > 0) world.mainFish.toDown();
+                    else if (yTouch - event.y > 0) world.mainFish.toUp();
                 }
                 upButtonClicked = false;
                 downButtonClicked = false;
             }
+            // Управление 1 - кнопки (default)
             if (event.type == Input.TouchEvent.TOUCH_DOWN) {
                 yTouch = event.y;
-                ////////////////////////////////////// КОНТРОЛЛЕР -> Кнопки ВТОРОЙ ВИД УПРАВЛЕНИЯ [DEFAULT]
                 if (Settings.controlEnabled) {
                     if (yTouch > 80) {
                         if (event.x < 150) {
                             if (yTouch < 360) {
                                 if (Settings.soundEnabled) Assets.click.play(1);
-                                upButtonClickedOk = world.mainFish.toUp();
+                                canUpButtonClickedOk = world.mainFish.toUp();
                                 upButtonClicked = true;
                             } else {
                                 if (Settings.soundEnabled) Assets.click.play(1);
-                                downButtonClickedOk = world.mainFish.toDown();
+                                canDownButtonClickedOk = world.mainFish.toDown();
                                 downButtonClicked = true;
                             }
                         }
                     }
                 }
-                ///////////////////
             }
         }
 
+        // Обновление мира
+        world.update(deltaTime);
+        // Если игра закончена, то к состоянию GameOver
+        if (world.gameOver) state = GameState.GameOver;
 
-        world.update(deltaTime);                                                       // Обновление мира
-        if (world.gameOver) {                                                           // Если игра закончена, то к состоянию GameOver
-            state = GameState.GameOver;
-        }// Обновление экрана(ИГРА)
-
-        if (oldScore != world.score.getScore()) {                                                  // Если отличаются очки, обновить
+        // Если отличаются очки, обновить
+        if (oldScore != world.score.getScore()) {
             oldScore = world.score.getScore();
-            score = String.format("%05d", oldScore);                                     // 5 нулей -> макс 99 999
+            score = String.format("%05d", oldScore);
         }
 
-        coinsCount = String.format("x%02d", world.score.coinsCount);
+        coinsCount = String.format("%02d", world.score.coinsCount);
     }
 
     @Override
@@ -230,75 +230,79 @@ public class GameScreen extends Screen {
     private void drawGameOverUI() {
         Graphics g = game.getGraphics();
 
-        // Отрисовка фона
+        // Отрисовка фона <Костыль> (?)
         for (int i = 0; i < 9; i++) {
             if (world.background.backgrounds_x[i] <= 960 && world.background.backgrounds_x[i] >= -960)
                 g.drawPixmap(Assets.backgrounds[i], world.background.backgrounds_x[i], 0);
         }
 
-        score = String.valueOf(Integer.valueOf(score)); // Избавление от нулей (Да, плохо)
+        // Избавление от нулей (Да, плохо)
+        score = String.valueOf(Integer.valueOf(score));
         g.drawText(score, 1, Color.WHITE);
 
         g.drawPixmap(Assets.repeat_button, 225, 345);
         g.drawPixmap(Assets.back_button, 562, 345);
     }
 
-    ////***********************************************************************************************************/////////////
+    // Визуализация экрана <Игровой процесс>
+    private void drawRunningUI() {
+        Graphics g = game.getGraphics();
+        // drawGridLayout(g);
+        drawTopButtons(g);
+        drawCoins(g);
+        drawScore(g);
+        if (Settings.controlEnabled)
+            drawControlButtons(g);
+    }
 
-    // Визуализация экрана <Игровой процесс>    РЕФАКТОООООООР!!!!!!!
-    private void drawRunningUI() {                                     // Визуализация пользовательского интерфейса(Состояние: Игра)
-        Graphics g = game.getGraphics();                                      // [NOOOOO =(]
-
-
-        g.drawPixmap(Assets.pause_button, 10, 0);                             // Пауза
-
+    // Отобразить верхние кнопки для  игрового экрана
+    private void drawTopButtons(Graphics g) {
+        g.drawPixmap(Assets.pause_button, 10, 0);
         if (Settings.soundEnabled)
-            g.drawPixmap(Assets.mini_sound_button, 92, 0, 0, 0, 80, 80);          // Музыка on
-        else g.drawPixmap(Assets.mini_sound_button, 92, 0, 80, 0, 80, 80);          // Музыка off
+            g.drawPixmap(Assets.mini_sound_button, 92, 0, 0, 0, 80, 80);
+        else g.drawPixmap(Assets.mini_sound_button, 92, 0, 80, 0, 80, 80);
+    }
 
-
-        g.drawText(score, 2, Color.WHITE);                   // Вывод количества очков
-
-        //g.drawPixmap(Assets.coin, g.getWidth()/2 -120, 0);   // Иконка монет
-
+    // Вывод количества монет
+    private void drawCoins(Graphics g) {
         if (world.score.coinsState == 1) g.drawPixmap(Assets.coin, g.getWidth() / 2 - 120, 0);
         else if (world.score.coinsState == 2) g.drawPixmap(Assets.coin2, g.getWidth() / 2 - 120, 0);
         else g.drawPixmap(Assets.coin3, g.getWidth() / 2 - 120, 0);
+        g.drawText(coinsCount, 3, Color.rgb(255, 252, 0));
+    }
 
-        g.drawText(coinsCount, 3, Color.rgb(255, 252, 0));   // Вывод количества монет
+    // Вывод количества очков
+    private void drawScore(Graphics g) {
+        g.drawText(score, 2, Color.WHITE);
+    }
 
+    // Отобразить кнопки для управления
+    private void drawControlButtons(Graphics g) {
+        if (!upButtonClicked) g.drawPixmap(Assets.up_button, 10, 90);
+        else
+            g.drawPixmap(canUpButtonClickedOk ? Assets.up_click1_button : Assets.up_click2_button, 10, 90);
 
+        if (!downButtonClicked) g.drawPixmap(Assets.down_button, 10, 370);
+        else
+            g.drawPixmap(canDownButtonClickedOk ? Assets.down_click1_button : Assets.down_click2_button, 10, 370);
+    }
 
-        /*/ Вспомогательные полосы
-        g.drawLine(0, 80, 960, 80, Color.BLACK);            // ОТДЕЛЕНИЕ МЕНЮШКИ              [ПОСЛЕ УБРАТЬ]
-        g.drawLine(710, 0, 710, 80, Color.BLACK);           // Отделение табла очков          [ПОСЛЕ УБРАТЬ]
-        g.drawLine(90, 0, 90, 80, Color.BLACK);             // Отделение паузы                [ПОСЛЕ УБРАТЬ]
-        g.drawLine(170, 0, 170, 80, Color.BLACK);           // Отделение регулятора громкости [ПОСЛЕ УБРАТЬ]
-        g.drawLine(0, 180, 960, 180, Color.BLACK);          // Вспомогательные полосы         [ПОСЛЕ УБРАТЬ]
+    // Показать разметку
+    private void drawGridLayout(Graphics g) {
+        // Меню
+        g.drawLine(0, 80, 960, 80, Color.BLACK);
+        // Очки
+        g.drawLine(710, 0, 710, 80, Color.BLACK);
+        // Пауза
+        g.drawLine(90, 0, 90, 80, Color.BLACK);
+        // Музыка вкл / выкл
+        g.drawLine(170, 0, 170, 80, Color.BLACK);
+        // Вспомогательные полосы
+        g.drawLine(0, 180, 960, 180, Color.BLACK);
         g.drawLine(0, 280, 960, 280, Color.BLACK);
         g.drawLine(0, 379, 960, 379, Color.BLACK);
         g.drawLine(0, 480, 960, 480, Color.BLACK);
         g.drawLine(0, 580, 960, 580, Color.BLACK);
-        // // // // // // // // // /*/
-
-
-        // Вьюха для отображения кнопок
-        if (Settings.controlEnabled) {
-            if (!upButtonClicked) g.drawPixmap(Assets.up_button, 10, 90);
-            else {
-                if (upButtonClickedOk) g.drawPixmap(Assets.up_click1_button, 10, 90);
-                else g.drawPixmap(Assets.up_click2_button, 10, 90);
-            }
-
-            if (!downButtonClicked) g.drawPixmap(Assets.down_button, 10, 370);
-            else {
-                if (downButtonClickedOk) g.drawPixmap(Assets.down_click1_button, 10, 370);
-                else g.drawPixmap(Assets.down_click2_button, 10, 370);
-            }
-        }
-        ////
-
-
     }
 
     // Отрисовка мира
@@ -354,6 +358,7 @@ public class GameScreen extends Screen {
 
     }
 
+    // Отрисовка вражеской рыбки
     public void drawEnemyFish(EnemyFish enemyFish) {
         Graphics g = game.getGraphics();
         //  if (enemyFish != null && enemyFish.x < 960 && enemyFish.x > -128) { // Проверка на вхождение в экранную область
@@ -373,7 +378,7 @@ public class GameScreen extends Screen {
             }
         } else if (enemyFish.type == EnemyFish.TYPE_ENEMY_SHARK)
             g.drawPixmap(Assets.enemy2[enemyFish.frame], enemyFish.x, enemyFish.line * 100, 0, 0, 240, 150);
-    }  // Отрисовка вражеской рыбки
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
