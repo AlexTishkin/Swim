@@ -1,4 +1,4 @@
-package com.swimgame.swim.gameObjects;
+package com.swimgame.swim.gameobjects;
 
 public class WorldScore {
     //  оличество тиков дл€ добавлени€ очков x2

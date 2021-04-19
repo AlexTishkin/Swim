@@ -1,4 +1,4 @@
-package com.swimgame.swim.gameObjects;
+package com.swimgame.swim.gameobjects;
 
 import java.util.Random;
 

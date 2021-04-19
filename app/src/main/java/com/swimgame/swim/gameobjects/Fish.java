@@ -1,4 +1,4 @@
-package com.swimgame.swim.gameObjects;
+package com.swimgame.swim.gameobjects;
 
 public abstract class Fish {
     protected static final int FRAME_COUNT = 6; // Количество кадров

@@ -1,4 +1,4 @@
-package com.swimgame.swim.gameObjects;
+package com.swimgame.swim.gameobjects;
 
 import com.swimgame.swim.Assets;
 import com.swimgame.swim.Settings;
@@ -17,15 +17,20 @@ public class World {
     // Игровые объекты
     public WorldBackground background;
     public WorldScore score;
-    public MainFish mainFish;           // Главный герой игры
+    public MainFish mainFish;
     public EnemyFish[] topEnemyFish;    // Враги (Верхние три полосы)
     public EnemyFish[] bottomEnemyFish; // Враги (Нижние две полосы)
-    public Coin[] coins;                // Монетки
+    public Coin[] coins;
 
-    public boolean enemyMode = false;                                 // Мод: добавление врагов(для первого экрана false)
-    public boolean gameOver = false;                                  // Флаг, закончена ли игра
+    // Мод: добавление врагов(для первого экрана false)
+    public boolean enemyMode;
+    // Флаг, закончена ли игра
+    public boolean gameOver;
 
     public World() {
+        enemyMode = false;
+        gameOver = false;
+
         background = new WorldBackground();
         score = new WorldScore();
         mainFish = new MainFish();

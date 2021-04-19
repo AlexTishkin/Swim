@@ -1,4 +1,4 @@
-package com.swimgame.swim.gameObjects;
+package com.swimgame.swim.gameobjects;
 
 // Главный герой игры - рыбка ^_^
 public class MainFish extends Fish {

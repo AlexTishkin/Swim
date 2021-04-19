@@ -7,71 +7,134 @@ import com.swimgame.base.Graphics;
 import com.swimgame.base.Input;
 import com.swimgame.base.Screen;
 import com.swimgame.swim.Assets;
-import com.swimgame.swim.gameObjects.Coin;
-import com.swimgame.swim.gameObjects.EnemyFish;
+import com.swimgame.swim.gameobjects.Coin;
+import com.swimgame.swim.gameobjects.EnemyFish;
 import com.swimgame.swim.Settings;
-import com.swimgame.swim.gameObjects.World;
+import com.swimgame.swim.gameobjects.World;
 
 import java.util.List;
 
-// В СЛЕД. ВЕРСИИ РЫБА - абстрактный класс [Наследники - mainFIsh и enemyFish]
-
 // Экран : Игровой процесс
-
 public class GameScreen extends Screen {
-    enum GameState {                                    // Состояния
-        Ready,                                          // Готовность
-        Running,                                        // Игра
-        Paused,                                         // Пауза
-        GameOver                                        // Игра окончена
+    enum GameState {
+        Ready,
+        Running,
+        Paused,
+        GameOver
     }
 
-    private boolean upButtonClicked, downButtonClicked; // Нажаты кнопки вверх/вниз
-    private boolean upButtonClickedOk, downButtonClickedOk;  // Можно двигаться
+    // Нажаты кнопки вверх/вниз
+    private boolean upButtonClicked, downButtonClicked;
+    // Можно двигаться
+    private boolean upButtonClickedOk, downButtonClickedOk;
 
-    GameState state = GameState.Ready;                 // Хранение текущего состояния экрана(default =  готовность)
-    World world;                                       // Экземпляр класса World => ЛОГИКА НАШЕГО ПОДВОДНОГО МИРА
-    int oldScore = 0;                                  // Текущий набранные очки
-    String score = "0";                                // Строка для отображения текущих очков
-    String coinsCount = "0";                          // Строка для отображения количества собранных монет
+    // Хранение текущего состояния экрана(default =  готовность)
+    GameState state = GameState.Ready;
+    // Экземпляр класса World => ЛОГИКА НАШЕГО ПОДВОДНОГО МИРА
+    World world;
 
-    int yTouch;                                        // Координата y для реализации контроллера
+    // Текущие набранные очки
+    int oldScore = 0;
+    // Строки для отображения текущих очков и количества собранных монет
+    String score = "0", coinsCount = "0";
+
+    // Координата y для реализации контроллера
+    int yTouch;
 
     public GameScreen(Game game) {
-        super(game);                                   // Конструктор родительского класса
+        super(game);
         score = String.format("%05d", 0);
-        world = new World();                           // Создание экземпляра класса логики игры
-        upButtonClicked = false;                       // Клавиши по умолчанию не нажаты[Для вьюхи]
+        world = new World();
+
+        // Кнопки вверх/вниз (Можно двигаться)
+        upButtonClicked = false;
         downButtonClicked = false;
-        upButtonClickedOk = false;                     // Можно двигаться
+        upButtonClickedOk = false;
         downButtonClickedOk = false;
     }
 
     @Override
+    // Контроллер (Обновление состояния логического мира)
     public void update(float deltaTime) {
-        List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();    // Массив касаний экрана
-        game.getInput().getKeyEvents();                                           // Массив нажатий клавиш
-        if (state == GameState.Ready)
-            updateReady(touchEvents, deltaTime);       // Обновление экрана в зависимости от состояния
+        List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();
+        game.getInput().getKeyEvents();
+
+        // Обновление экрана в зависимости от состояния
+        if (state == GameState.Ready) updateReady(touchEvents, deltaTime);
         if (state == GameState.Running) updateRunning(touchEvents, deltaTime);
         if (state == GameState.Paused) updatePaused(touchEvents);
         if (state == GameState.GameOver) updateGameOver(touchEvents, deltaTime);
     }
 
+    // Контроллер экрана <Готовность>
     private void updateReady(List<Input.TouchEvent> touchEvents, float deltaTime) {
         if (touchEvents.size() > 0 && touchEvents.get(0).y > 80) {
-            touchEvents = game.getInput().getTouchEvents();                     // ЧТОБЫ СРАЗУ НЕ УПРАВЛЯТЬ РЫБКОЙ
+            touchEvents = game.getInput().getTouchEvents();
             if (Settings.soundEnabled) Assets.click.play(1);
             world.enemyMode = true;
             state = GameState.Running;
         }
         world.update(deltaTime);
+    }
 
-    }                     // Обновление экрана(ГОТОВНОСТЬ) [State 1]   [OK]
+    // Контроллер экрана <Пауза>
+    private void updatePaused(List<Input.TouchEvent> touchEvents) {
+        int len = touchEvents.size();
+        // В зависимости от клавиш переход в состояние
+        for (int i = 0; i < len; i++) {
+            Input.TouchEvent event = touchEvents.get(i);
+            if (event.type == Input.TouchEvent.TOUCH_UP) {
+                // Выйти в главное меню
+                if (inBounds(event, 111, 300, 172, 172)) {
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    game.setScreen(new MainMenuScreen(game));
+                    return;
+                }
+                // Продолжить игру
+                if (inBounds(event, 394, 300, 172, 172)) {
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    state = GameState.Running;
+                    return;
+                }
+                // Выйти из игры
+                if (inBounds(event, 677, 300, 172, 172)) {
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    Settings.save(game.getFileIO());
+                    System.exit(0);
+                    return;
+                }
+            }
+        }
+    }
 
-    ///////////////////////////////////////////////...................[ETA TOLKO].............................................////////////////////////////////
+    // Контроллер экрана <Конец игры>
+    private void updateGameOver(List<Input.TouchEvent> touchEvents, float deltaTime) {
+        int len = touchEvents.size();
+        // В зависимости от клавиш переход в состояние
+        for (int i = 0; i < len; i++) {
+            Input.TouchEvent event = touchEvents.get(i);
+            if (event.type == Input.TouchEvent.TOUCH_UP) {
+                // Играть еще раз
+                if (inBounds(event, 225, 345, 172, 172)) {
+                    game.setScreen(new GameScreen(game)); // Начать новую игру
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    return;
+                }
+                // Выйти в главное меню
+                if (inBounds(event, 562, 345, 172, 172)) {
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    game.setScreen(new MainMenuScreen(game));
+                    return;
+                }
+            }
+        }
+        // Прокрутка фона после проигрыша
+        world.enemyMode = false;
+        world.gameOver = false;
+        world.update(deltaTime);
+    }
 
-
+    // Контроллер экрана <Игровой процесс> (Состояние логического игрового мира по нажатиям) РЕФАКТОООООООР!!!!!!!
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         int len = touchEvents.size();
         for (int i = 0; i < len; i++) {
@@ -127,21 +190,62 @@ public class GameScreen extends Screen {
 
         world.update(deltaTime);                                                       // Обновление мира
         if (world.gameOver) {                                                           // Если игра закончена, то к состоянию GameOver
-            // if(Settings.soundEnabled) Звук_проигрыша.play()                         // КАКОЙ-НИБУДЬ ЗВУК ПРОИГРЫША =(
             state = GameState.GameOver;
         }// Обновление экрана(ИГРА)
 
         if (oldScore != world.score.getScore()) {                                                  // Если отличаются очки, обновить
             oldScore = world.score.getScore();
             score = String.format("%05d", oldScore);                                     // 5 нулей -> макс 99 999
-            //if(Settings.soundEnabled) Звук_сжирания_бонуса.play                            // СОЖРАТЬ РЫБУ -/ Звук
         }
 
         coinsCount = String.format("x%02d", world.score.coinsCount);
-    }  // Обновление экрана(ИГРА!!!)  [State 2] [ПОЧТИ РЕАЛИЗОВАНО!!!] !!!!!!!!!!!!!!!!!!!!!!!!
+    }
 
+    @Override
+    public void present(float deltaTime) {
+        drawWorld(world);
+        // Отрисовка в зависимости от состояния
+        if (state == GameState.Ready) drawReadyUI();
+        if (state == GameState.Running) drawRunningUI();
+        if (state == GameState.Paused) drawPausedUI();
+        if (state == GameState.GameOver) drawGameOverUI();
+    }
+
+    // Визуализация экрана <Готовность>
+    private void drawReadyUI() {
+        Graphics g = game.getGraphics();
+        g.drawPixmap(Assets.ready, 245, 80);
+    }
+
+    // Визуализация экрана <Пауза>
+    private void drawPausedUI() {
+        Graphics g = game.getGraphics();
+        g.drawPixmap(Assets.pause, 239, 67);
+        g.drawPixmap(Assets.back_button, 111, 300);
+        g.drawPixmap(Assets.play_button, 394, 300);
+        g.drawPixmap(Assets.ex_button, 677, 300);
+    }
+
+    // Визуализация экрана <Конец игры>
+    private void drawGameOverUI() {
+        Graphics g = game.getGraphics();
+
+        // Отрисовка фона
+        for (int i = 0; i < 9; i++) {
+            if (world.background.backgrounds_x[i] <= 960 && world.background.backgrounds_x[i] >= -960)
+                g.drawPixmap(Assets.backgrounds[i], world.background.backgrounds_x[i], 0);
+        }
+
+        score = String.valueOf(Integer.valueOf(score)); // Избавление от нулей (Да, плохо)
+        g.drawText(score, 1, Color.WHITE);
+
+        g.drawPixmap(Assets.repeat_button, 225, 345);
+        g.drawPixmap(Assets.back_button, 562, 345);
+    }
 
     ////***********************************************************************************************************/////////////
+
+    // Визуализация экрана <Игровой процесс>    РЕФАКТОООООООР!!!!!!!
     private void drawRunningUI() {                                     // Визуализация пользовательского интерфейса(Состояние: Игра)
         Graphics g = game.getGraphics();                                      // [NOOOOO =(]
 
@@ -197,7 +301,7 @@ public class GameScreen extends Screen {
 
     }
 
-
+    // Отрисовка мира
     private void drawWorld(World world) {
         Graphics g = game.getGraphics();
 
@@ -273,122 +377,34 @@ public class GameScreen extends Screen {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    private void updatePaused(List<Input.TouchEvent> touchEvents) {
-        int len = touchEvents.size();
-        for (int i = 0; i < len; i++) {                                       // В зависимости от клавиш переход в состояние
-            Input.TouchEvent event = touchEvents.get(i);
-            if (event.type == Input.TouchEvent.TOUCH_UP) {
-
-                if (inBounds(event, 111, 300, 172, 172)) {                     // Выход в главное меню
-                    if (Settings.soundEnabled) Assets.click.play(1);
-                    game.setScreen(new MainMenuScreen(game));
-                    return;
-                }
-                if (inBounds(event, 394, 300, 172, 172)) {                       // Нажата кнопка продолжить
-                    if (Settings.soundEnabled) Assets.click.play(1);
-                    state = GameState.Running;
-                    return;
-                }
-                if (inBounds(event, 677, 300, 172, 172)) {                       // Выход из игры
-                    if (Settings.soundEnabled) Assets.click.play(1);
-                    Settings.save(game.getFileIO());
-                    System.exit(0);
-                    return;
-                }
-            }
-        }
-    }                   // Обновление экрана(ПАУЗА) [State 3]   [OK]
-
-    private void updateGameOver(List<Input.TouchEvent> touchEvents, float deltaTime) {                       // Если кнопка нажата -> выход в меню
-        int len = touchEvents.size();
-        for (int i = 0; i < len; i++) {
-            Input.TouchEvent event = touchEvents.get(i);
-            if (event.type == Input.TouchEvent.TOUCH_UP) {
-                if (inBounds(event, 225, 345, 172, 172)) {
-                    game.setScreen(new GameScreen(game)); // Начать новую игру
-                    if (Settings.soundEnabled) Assets.click.play(1);
-                    return;
-                }
-                if (inBounds(event, 562, 345, 172, 172)) {
-                    if (Settings.soundEnabled) Assets.click.play(1);
-                    game.setScreen(new MainMenuScreen(game));
-                    return;
-                }
-
-
-            }
-        }
-        world.enemyMode = false;
-        world.gameOver = false;
-        world.update(deltaTime);
-    }   // Обновление экрана(КОНЕЦ ИГРЫ) [State 4] [OK]
-
-    @Override
-    public void present(float deltaTime) {
-        Graphics g = game.getGraphics();
-        drawWorld(world);                                                                  // Отрисовка мира
-        if (state == GameState.Ready)
-            drawReadyUI();                                   // Отрисовка в зависимости от состояния
-        if (state == GameState.Running) drawRunningUI();
-        if (state == GameState.Paused) drawPausedUI();
-        if (state == GameState.GameOver) drawGameOverUI();
-        // Вывод кол-ва набранных очков
-    }
-
-    private void drawReadyUI() {                                      // Визуализация пользовательского интерфейса(Состояние: Готовность)  [OK]
-        Graphics g = game.getGraphics();
-        g.drawPixmap(Assets.ready, 245, 80);
-    }
-
-    private void drawPausedUI() {                                      // Визуализация пользовательского интерфейса(Состояние: Пауза) [OK]
-        Graphics g = game.getGraphics();
-        g.drawPixmap(Assets.pause, 239, 67);
-        g.drawPixmap(Assets.back_button, 111, 300);
-        g.drawPixmap(Assets.play_button, 394, 300);
-        g.drawPixmap(Assets.ex_button, 677, 300);
-    }
-
-    private void drawGameOverUI() {                                    // Визуализация пользовательского интерфейса(Состояние: Конец игры) [OK]
-        Graphics g = game.getGraphics();
-
-        for (int i = 0; i < 9; i++) {
-            if (world.background.backgrounds_x[i] <= 960 && world.background.backgrounds_x[i] >= -960)// Отрисовка фона
-                g.drawPixmap(Assets.backgrounds[i], world.background.backgrounds_x[i], 0);
-        }
-
-        //g.drawText(score, 100, 100, Color.BLUE);
-        score = String.valueOf(Integer.valueOf(score)); // Избавление от нулей (Да, извращенство)
-        g.drawText(score, 1, Color.WHITE);
-
-        //g.drawPixmap(Assets.gameOver, 63, 135);
-        g.drawPixmap(Assets.repeat_button, 225, 345);
-        g.drawPixmap(Assets.back_button, 562, 345);
-    }
-
+    // Было ли касание в данной области
     private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
         return (event.x > x && event.x < x + width - 1 && event.y > y && event.y < y + height - 1);
-    }   // Было ли касание в данной области
+    }
 
     @Override
-    public void pause() {                                            // Активность ставится на паузу ИЛИ игровой экран заменяется на другой{save settings}
-        if (Assets.game_media != null) {                            // Остановка музыки(если играла)
-            if (Settings.soundEnabled) Assets.game_media.stop();
-        }
+    // Активность ставится на паузу ИЛИ игровой экран заменяется на другой (Save settings)
+    public void pause() {
+        if (Assets.game_media != null && Settings.soundEnabled)
+            Assets.game_media.stop();
 
+        // Если состояние = ИГРА, то заменим на состояние = ПАУЗА (Закрытие активности)
         if (state == GameState.Running)
-            state = GameState.Paused;                                // Если состояние = ИГРА, то заменим на состояние = ПАУЗА{Закрытие активности}
-        if (world.gameOver) {                                        // Если игра в состоянии GameOver
-            Settings.addScore(world.score.getScore());                          // то добавляем наши очки в таблицу рекордов
-            Settings.save(game.getFileIO());                         // Сохраняем все настройки в файл
+            state = GameState.Paused;
+
+        // Если игра в состоянии GameOver
+        if (world.gameOver) {
+            // Добавляем наши очки в таблицу рекордов
+            Settings.addScore(world.score.getScore());
+            // Сохраняем все настройки в файл
+            Settings.save(game.getFileIO());
         }
     }
 
     @Override
     public void resume() {
-        if (Assets.game_media != null) {                           // Возобновление музыки(если включена)
-            if (Settings.soundEnabled)
-                Assets.game_media.play();                          // Возобновляем музыку
-        }
+        if (Assets.game_media != null && Settings.soundEnabled)
+            Assets.game_media.play();
     }
 
     @Override
