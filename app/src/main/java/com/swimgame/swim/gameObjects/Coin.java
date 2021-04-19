@@ -13,6 +13,8 @@ public class Coin {
     public int color;                          // цвет
     public boolean isChecked;                  // Чекнута ли монетка или нет
 
+    public static Random random = new Random();
+
     public Coin(int x, int line, int color) {
         this.x = x;
         this.line = line;
@@ -20,13 +22,27 @@ public class Coin {
         isChecked = false;
     }
 
-    public void check() {
-        isChecked = true;
+    public void recreate(boolean isTop) {
+        if (x > -240) return;
+        x = 970;
+        isChecked = false;
+        line = isTop ? random.nextInt(3) + 1 : random.nextInt(2) + 4;
+        color = getCoinColor();
+    }
+
+    private int getCoinColor() {
+        int randomValue = random.nextInt(100);
+        if (randomValue < 10) return Coin.COLOR_RED;
+        if (randomValue < 40) return Coin.COLOR_GREEN;
+        return Coin.COLOR_YELLOW;
+    }
+
+    public void move() {
+        x -= 1;
     }
 
     // Инициализация монеток для игры
     public static Coin[] createCoins() {
-        Random random = new Random();
         Coin[] coins = new Coin[10];
         // Верхние монетки
         coins[0] = new Coin(1200, random.nextInt(3) + 1, Coin.COLOR_YELLOW);

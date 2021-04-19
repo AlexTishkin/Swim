@@ -29,7 +29,7 @@ public class EnemyFish extends Fish {
 
     // Обновление анимации и движения
     @Override
-    public void update() {
+    public void animate() {
         if (frameTick != speed) {
             frameTick++;
             return;

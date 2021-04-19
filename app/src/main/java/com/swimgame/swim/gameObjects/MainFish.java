@@ -13,7 +13,7 @@ public class MainFish extends Fish {
     }
 
     @Override
-    public void update() {
+    public void animate() {
         if (frameTick != FRAME_TICK) {
             frameTick++;
             return;
@@ -22,6 +22,12 @@ public class MainFish extends Fish {
         frameTick = 0;
     }
 
+    // Столкновение с монеткой
+    public boolean isClashCoin(Coin coin) {
+        return !coin.isChecked && coin.line == line && x + 128 >= coin.x + 20 && x <= coin.x + 60;
+    }
+
+    // Столкновение со встречными рыбами
     public boolean isClash(EnemyFish[] topEnemyFish, EnemyFish[] bottomEnemyFish) {
         return isClash(topEnemyFish) || isClash(bottomEnemyFish);
     }

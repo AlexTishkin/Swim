@@ -24,5 +24,5 @@ public abstract class Fish {
     }
 
     // Переход к следующему кадру (Анимация)
-    public abstract void update();
+    public abstract void animate();
 }

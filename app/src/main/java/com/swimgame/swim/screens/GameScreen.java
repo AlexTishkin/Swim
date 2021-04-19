@@ -131,13 +131,13 @@ public class GameScreen extends Screen {
             state = GameState.GameOver;
         }// Обновление экрана(ИГРА)
 
-        if (oldScore != world.score) {                                                  // Если отличаются очки, обновить
-            oldScore = world.score;
+        if (oldScore != world.score.getScore()) {                                                  // Если отличаются очки, обновить
+            oldScore = world.score.getScore();
             score = String.format("%05d", oldScore);                                     // 5 нулей -> макс 99 999
             //if(Settings.soundEnabled) Звук_сжирания_бонуса.play                            // СОЖРАТЬ РЫБУ -/ Звук
         }
 
-        coinsCount = String.format("x%02d", world.coinsCount);
+        coinsCount = String.format("x%02d", world.score.coinsCount);
     }  // Обновление экрана(ИГРА!!!)  [State 2] [ПОЧТИ РЕАЛИЗОВАНО!!!] !!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -157,8 +157,8 @@ public class GameScreen extends Screen {
 
         //g.drawPixmap(Assets.coin, g.getWidth()/2 -120, 0);   // Иконка монет
 
-        if (world.coinsState == 1) g.drawPixmap(Assets.coin, g.getWidth() / 2 - 120, 0);
-        else if (world.coinsState == 2) g.drawPixmap(Assets.coin2, g.getWidth() / 2 - 120, 0);
+        if (world.score.coinsState == 1) g.drawPixmap(Assets.coin, g.getWidth() / 2 - 120, 0);
+        else if (world.score.coinsState == 2) g.drawPixmap(Assets.coin2, g.getWidth() / 2 - 120, 0);
         else g.drawPixmap(Assets.coin3, g.getWidth() / 2 - 120, 0);
 
         g.drawText(coinsCount, 3, Color.rgb(255, 252, 0));   // Вывод количества монет
@@ -202,8 +202,8 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
 
         for (int i = 0; i < 9; i++) {                       // Отрисовка фона
-            if (world.backgrounds_x[i] <= 960 && world.backgrounds_x[i] >= -960)
-                g.drawPixmap(Assets.backgrounds[i], world.backgrounds_x[i], 0);
+            if (world.background.backgrounds_x[i] <= 960 && world.background.backgrounds_x[i] >= -960)
+                g.drawPixmap(Assets.backgrounds[i], world.background.backgrounds_x[i], 0);
         }
 
         g.drawPixmap(Assets.person[world.mainFish.frame], world.mainFish.x,
@@ -352,8 +352,8 @@ public class GameScreen extends Screen {
         Graphics g = game.getGraphics();
 
         for (int i = 0; i < 9; i++) {
-            if (world.backgrounds_x[i] <= 960 && world.backgrounds_x[i] >= -960)// Отрисовка фона
-                g.drawPixmap(Assets.backgrounds[i], world.backgrounds_x[i], 0);
+            if (world.background.backgrounds_x[i] <= 960 && world.background.backgrounds_x[i] >= -960)// Отрисовка фона
+                g.drawPixmap(Assets.backgrounds[i], world.background.backgrounds_x[i], 0);
         }
 
         //g.drawText(score, 100, 100, Color.BLUE);
@@ -378,7 +378,7 @@ public class GameScreen extends Screen {
         if (state == GameState.Running)
             state = GameState.Paused;                                // Если состояние = ИГРА, то заменим на состояние = ПАУЗА{Закрытие активности}
         if (world.gameOver) {                                        // Если игра в состоянии GameOver
-            Settings.addScore(world.score);                          // то добавляем наши очки в таблицу рекордов
+            Settings.addScore(world.score.getScore());                          // то добавляем наши очки в таблицу рекордов
             Settings.save(game.getFileIO());                         // Сохраняем все настройки в файл
         }
     }
