@@ -8,7 +8,9 @@ public class World {
     public static final int WORLD_HEIGHT = 5;                         // 5 линий, где можно плыть
     public static final int ENEMY_COUNT = 4;                          // Количество врагов
 
-    public static final float TICK_INITIAL = 0.0040f;                 // Начальный временной интервал, используемый для движения объектов 0.0240f;
+    // Увеличение скорости после 10к очков (tick)
+    // Потом 0.0040f
+    public static final float TICK_INITIAL = 0.0060f;                 // Начальный временной интервал, используемый для движения объектов 0.0240f;
     public static final float TICK_DECREMENT = 0.00005f;              // Значение, на которое будет уменьшаться тик(увеличение скорости)
 
     float tickTime = 0;                                               // Счетчик времени, к которой будем прибавлять дельту
@@ -55,6 +57,17 @@ public class World {
                 onEnemyHandling();
                 onCoinHandling();
                 score.addScore();
+                // Увеличение скорости
+                if (score.getScore() > 800 && tick != 0.0055f)
+                    tick = 0.0055f;
+                if (score.getScore() > 2500 && tick != 0.0050f)
+                    tick = 0.0050f;
+                if (score.getScore() > 5000 && tick != 0.0045f)
+                    tick = 0.0045f;
+                if (score.getScore() > 10000 && tick != 0.0040f)
+                    tick = 0.0040f;
+                if (score.getScore() > 20000 && tick != 0.0035f)
+                    tick = 0.0035f;
             }
         }
     }
