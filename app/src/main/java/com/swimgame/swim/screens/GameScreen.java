@@ -2,6 +2,7 @@ package com.swimgame.swim.screens;
 
 import android.graphics.Color;
 
+import com.swimgame.base.Advertisement;
 import com.swimgame.base.Game;
 import com.swimgame.base.Graphics;
 import com.swimgame.base.Input;
@@ -190,7 +191,11 @@ public class GameScreen extends Screen {
         // Обновление мира
         world.update(deltaTime);
         // Если игра закончена, то к состоянию GameOver
-        if (world.gameOver) state = GameState.GameOver;
+        if (world.gameOver) {
+            state = GameState.GameOver;
+            Advertisement ad = game.getAdvertisement();
+            ad.showInterstitial();
+        }
 
         // Если отличаются очки, обновить
         if (oldScore != world.score.getScore()) {

@@ -9,10 +9,11 @@ package com.swimgame.base;
 */
 
 public interface Game {
-    public Input getInput();               // Доступ к вх. потоку: получение реакции юзера
-    public FileIO getFileIO();             // Доступ к ФС: чтение и запись файлов
-    public Graphics getGraphics();         // Доступ к Графике: прорисовка экрана
-    public Audio getAudio();               // Доступ к Звуку: воспроизведение звука
+    public Input getInput();                    // Доступ к вх. потоку: получение реакции юзера
+    public FileIO getFileIO();                  // Доступ к ФС: чтение и запись файлов
+    public Graphics getGraphics();              // Доступ к Графике: прорисовка экрана
+    public Audio getAudio();                    // Доступ к Звуку: воспроизведение звука
+    public Advertisement getAdvertisement();    // Работа с рекламой (admob)
 
     public void setScreen(Screen screen);  // Установка текущего экрана для игры
     public Screen getCurrentScreen();      // Возвращает текущий активный экран

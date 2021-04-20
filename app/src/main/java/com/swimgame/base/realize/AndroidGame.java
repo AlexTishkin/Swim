@@ -9,6 +9,7 @@ import android.os.PowerManager;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.swimgame.base.Advertisement;
 import com.swimgame.base.Audio;
 import com.swimgame.base.FileIO;
 import com.swimgame.base.Game;
@@ -16,17 +17,15 @@ import com.swimgame.base.Graphics;
 import com.swimgame.base.Input;
 import com.swimgame.base.Screen;
 
-
 public abstract class AndroidGame extends Activity implements Game { // Активити
     AndroidFastRenderView renderView;                   // Управление потоком основного цикла + отрисовка
     Graphics graphics;                                  // Доступ к графике
     Audio audio;                                        // Доступ к звуку
     Input input;                                        // Обработка поступающих событий от юзера
+    Advertisement advertisement;                        // Работа с рекламой (AdMob)
     FileIO fileIO;                                      // Доступ к файловому вводу/выводу
     Screen screen;                                      // Экраны переходов
     PowerManager.WakeLock wakeLock;                     // Чтобы экран не гаснул
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,23 +39,24 @@ public abstract class AndroidGame extends Activity implements Game { // Акти
         int frameBufferHeight = isLandscape ? 640 : 960;                    // в зависимости от ориентации
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth,          // СОЗДАЕМ ФРЕЙМБУФФЕР
                 frameBufferHeight, Bitmap.Config.RGB_565);
-        float scaleX = (float) frameBufferWidth                             // Находим масштабы координат(для касаний)
-                / getWindowManager().getDefaultDisplay().getWidth();
-        float scaleY = (float) frameBufferHeight
-                / getWindowManager().getDefaultDisplay().getHeight();
 
-        renderView = new AndroidFastRenderView(this, frameBuffer);          // инициализируем низкоуровневые модули
+        // Находим масштабы координат(для касаний)
+        float scaleX = (float) frameBufferWidth / getWindowManager().getDefaultDisplay().getWidth();
+        float scaleY = (float) frameBufferHeight / getWindowManager().getDefaultDisplay().getHeight();
+
+        // инициализируем низкоуровневые модули
+        renderView = new AndroidFastRenderView(this, frameBuffer);
         graphics = new AndroidGraphics(getAssets(), frameBuffer);
         fileIO = new AndroidFileIO(getAssets());
         audio = new AndroidAudio(this);
         input = new AndroidInput(this, renderView, scaleX, scaleY);
+        advertisement = new AndroidAdvertisement(this);
         screen = getStartScreen();                                         // метод, реализованный игрой
         setContentView(renderView);                                        // Вывод потока осн. цикла(Отрисовка)
         PowerManager powerManager = (PowerManager)
                 getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "GLGame"); // Чтобы не тух экран
     }
-
 
     @Override
     public void onResume() {
@@ -76,23 +76,31 @@ public abstract class AndroidGame extends Activity implements Game { // Акти
             screen.dispose();                                             // Зачищаем экран
     }
 
-    @Override                                                             // возвращаем экземпляры классов(Screen)
+    @Override
+    // возвращаем экземпляры классов(Screen)
     public Input getInput() {
         return input;
     }
+
     @Override
     public FileIO getFileIO() {
         return fileIO;
     }
+
     @Override
     public Graphics getGraphics() {
         return graphics;
     }
+
     @Override
     public Audio getAudio() {
         return audio;
     }
 
+    @Override
+    public Advertisement getAdvertisement() {
+        return advertisement;
+    }
 
     @Override
     public void setScreen(Screen screen) {

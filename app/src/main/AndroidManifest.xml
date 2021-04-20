@@ -15,6 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
+        <!-- Sample AdMob app ID: ca-app-pub-5118329113135673~3617871065 -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5118329113135673~3617871065"/>
         <activity
             android:name=".swim.SwimGame"
             android:configChanges="keyboard|keyboardHidden|orientation"
