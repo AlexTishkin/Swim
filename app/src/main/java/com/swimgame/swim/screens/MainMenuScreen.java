@@ -10,7 +10,6 @@ import com.swimgame.swim.Settings;
 import java.util.List;
 
 // Экран: главное меню
-
 public class MainMenuScreen extends Screen {
 
     public MainMenuScreen(Game game) {
@@ -18,82 +17,88 @@ public class MainMenuScreen extends Screen {
     }
 
     @Override
+    // Обновление состояния экрана
     public void update(float deltaTime) {
         Graphics g = game.getGraphics();
-        List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();                    // Считывание всех касаний экрана
-        game.getInput().getKeyEvents();                                                           // Считывание всех нажатий клавиш(пул free)
-        int len = touchEvents.size();                                                             // Длина массива касаний
+        List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();
+        game.getInput().getKeyEvents();
+        int len = touchEvents.size();
+        // Перебираем в массиве все касания экрана
+        for (int i = 0; i < len; i++) {
+            // event - очередное касание
+            Input.TouchEvent event = touchEvents.get(i);
 
-        for (int i = 0; i < len; i++) {                                                           // Перебираем в массиве все касания экрана
-            Input.TouchEvent event = touchEvents.get(i);                                          // event - очередное касание
-
-            if (event.type == Input.TouchEvent.TOUCH_UP) {                                        // Если событие = UP, то продолжаем
-                if (inBounds(event, 15, 20, 120, 120)) {                                          // ВКЛ|ВЫКЛ ЗВУК
-                    Settings.soundEnabled = !Settings.soundEnabled;                               // Инвертируем значение музыки
-                    if (Settings.soundEnabled) Assets.click.play(1);                              // Звук нажатия
-                    if (Settings.soundEnabled) Assets.menu_media.play();                          // Музыка (on/off)
+            // Если событие = UP, то продолжаем
+            if (event.type == Input.TouchEvent.TOUCH_UP) {
+                // ВКЛ|ВЫКЛ ЗВУК
+                if (inBounds(event, 15, 20, 120, 120)) {
+                    Settings.soundEnabled = !Settings.soundEnabled;
+                    if (Settings.soundEnabled) Assets.click.play(1);
+                    if (Settings.soundEnabled) Assets.menu_media.play();
                     else Assets.menu_media.stop();
                 }
-                if (inBounds(event, 830, 20, 120, 120)) {                                         // НАЖАТА КНОПКА: ВЫХОД ИЗ ИГРЫ
-                    Settings.save(game.getFileIO());                                              // Сохраняем все данные
-                    System.exit(0);                                                               // Выход
+                // НАЖАТА КНОПКА: НАЧАТЬ ИГРУ
+                if (inBounds(event, 395, 330, 172, 172)) {
+                    game.setScreen(new GameScreen(game));
+                    if (Settings.soundEnabled) Assets.click.play(1);
                     return;
                 }
-                if (inBounds(event, 395, 330, 172, 172)) {                                        // НАЖАТА КНОПКА: НАЧАТЬ ИГРУ
-                    game.setScreen(new GameScreen(game));                                         // Переход на экран: игра
-                    if (Settings.soundEnabled) Assets.click.play(1);                              // Звук нажатия
+                // Таблица рекордов
+                if (inBounds(event, 215, 340, 145, 145)) {
+                    game.setScreen(new HighscoreScreen(game));
+                    if (Settings.soundEnabled) Assets.click.play(1);
                     return;
                 }
-                if (inBounds(event, 215, 340, 145, 145)) {       // Таблица рекордов
-                    game.setScreen(new HighscoreScreen(game));                                    // Переход на экран: Таблица рекордов
-                    if (Settings.soundEnabled) Assets.click.play(1);                              // Звук нажатия
-                    return;
-                }
-                if (inBounds(event, 605, 340, 145, 145)) {                                        // НАЖАТА КНОПКА: ПОМОЩЬ
-                    game.setScreen(new HelpScreen(game));                                         // Переход на экран: Справочная информация
-                    if (Settings.soundEnabled) Assets.click.play(1);                              // Звук нажатия
+                // НАЖАТА КНОПКА: ПОМОЩЬ
+                if (inBounds(event, 605, 340, 145, 145)) {
+                    game.setScreen(new HelpScreen(game));
+                    if (Settings.soundEnabled) Assets.click.play(1);
                     return;
                 }
             }
         }
-    }                                                     // Обновление состояния экрана
+    }
 
     @Override
+    // Вывод на экран
     public void present(float deltaTime) {
         Graphics g = game.getGraphics();
-        g.drawPixmap(Assets.background, 0, 0);                                                    // Отрисовка фона
-        g.drawPixmap(Assets.logo, 150, 70);                                                       // Отрисовка логотипа
-        g.drawPixmap(Assets.play_button, 415, 345);                                               // Отрисовка кнопки: Начать игру
-        g.drawPixmap(Assets.records_button, 235, 355);                                            // Отрисовка кнопки: Рекорды
-        g.drawPixmap(Assets.help_button, 625, 355);                                               // Отрисовка кнопки: Помощь
-        g.drawPixmap(Assets.buttons, 830, 20, 0, 240, 120, 120);                                  // Отрисовка кнопки: Выход
+        g.drawPixmap(Assets.background, 0, 0);
+        g.drawPixmap(Assets.logo, 150, 70);
+        g.drawPixmap(Assets.play_button, 415, 345);
+        g.drawPixmap(Assets.records_button, 235, 355);
+        g.drawPixmap(Assets.help_button, 625, 355);
 
-        if (Settings.soundEnabled) g.drawPixmap(Assets.buttons, 15, 20, 0, 120, 122, 122);          // Отрисовка значка звука(on/off)
+        // Отрисовка значка звука(on/off)
+        if (Settings.soundEnabled)
+            g.drawPixmap(Assets.buttons, 15, 20, 0, 120, 122, 122);
         else g.drawPixmap(Assets.buttons, 14, 20, 120, 120, 122, 122);
 
-        //  if (Settings.musicEnabled)  g.drawPixmap(Assets.buttons, 15, 160, 0, 120, 122, 122);      // Отрисовка значка музыки(on/off)
-        //  else g.drawPixmap(Assets.buttons, 14, 160, 120, 120, 122, 122);
-    }                                                    // Вывод на экран
+    }
 
+    // Было ли касание в данной области
     private boolean inBounds(Input.TouchEvent event, int x, int y, int width, int height) {
         return (event.x > x && event.x < x + width - 1 && event.y > y && event.y < y + height - 1);
-    }   // Было ли касание в данной области
+    }
 
     @Override
     public void pause() {
-        if (Assets.menu_media != null) {                                                          // Остановка музыки(если играла)
-            Settings.save(game.getFileIO());                         // Сохраняем все настройки в файл
+        if (Assets.menu_media != null) {
+            Settings.save(game.getFileIO());
             if (Settings.soundEnabled) Assets.menu_media.stop();
         }
-    }                                                                     // Остановка игры(Музыка)
+    }
+
     @Override
     public void resume() {
-        if (Assets.menu_media != null) {                                                          // Возобновление музыки(если включена)
+        if (Assets.menu_media != null) {
             if (Settings.soundEnabled)
-                Assets.menu_media.play();               // Возобновляем музыку
+                Assets.menu_media.play();
         }
-    }                                                                    // Возврат в игру(Музыка)
+    }
+
     @Override
-    public void dispose() {  }                                                                    // Заглушка
+    public void dispose() {
+    }
 }
 
