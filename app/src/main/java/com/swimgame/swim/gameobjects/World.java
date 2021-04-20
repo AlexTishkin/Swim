@@ -60,7 +60,7 @@ public class World {
                 // Увеличение скорости
                 if (score.getScore() > 800 && tick != 0.0055f)
                     tick = 0.0055f;
-                if (score.getScore() > 2500 && tick != 0.0050f)
+                if (score.getScore() > 2000 && tick != 0.0050f)
                     tick = 0.0050f;
                 if (score.getScore() > 5000 && tick != 0.0045f)
                     tick = 0.0045f;
