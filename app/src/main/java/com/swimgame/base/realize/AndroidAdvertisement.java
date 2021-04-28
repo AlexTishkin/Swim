@@ -22,11 +22,15 @@ public class AndroidAdvertisement implements Advertisement {
     // Межстраничный рекламный блок
     private static final String TAG = "Advertisement";
     // test
-//    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
-    private static final String AD_UNIT_ID = "ca-app-pub-5118329113135673/5592942496";
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    //    private static final String AD_UNIT_ID = "ca-app-pub-5118329113135673/5592942496";
     private InterstitialAd interstitialAd;
 
     private Activity activity;
+
+    // Показывать рекламу раз в 3 поражения
+    private int looseCount = 0;
+    private static final int maxLoosesForAdvert = 3;
 
     public AndroidAdvertisement(Activity activity) {
         this.activity = activity;
@@ -117,4 +121,15 @@ public class AndroidAdvertisement implements Advertisement {
             }
         });
     }
+
+    @Override
+    public boolean canShowAdvert() {
+        looseCount++;
+        if (looseCount == maxLoosesForAdvert) {
+            looseCount = 0;
+            return true;
+        }
+        return false;
+    }
+
 }
