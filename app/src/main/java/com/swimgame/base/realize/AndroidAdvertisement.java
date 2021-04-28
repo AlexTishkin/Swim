@@ -22,8 +22,8 @@ public class AndroidAdvertisement implements Advertisement {
     // Межстраничный рекламный блок
     private static final String TAG = "Advertisement";
     // test
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
-    //    private static final String AD_UNIT_ID = "ca-app-pub-5118329113135673/5592942496";
+    // private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712";
+    private static final String AD_UNIT_ID = "ca-app-pub-5118329113135673/5592942496";
     private InterstitialAd interstitialAd;
 
     private Activity activity;
