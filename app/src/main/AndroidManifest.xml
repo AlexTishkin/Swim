@@ -3,8 +3,6 @@
     package="com.swimgame"
     android:installLocation="preferExternal">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
@@ -17,7 +15,7 @@
         <!-- Sample AdMob app ID: ca-app-pub-5118329113135673~3617871065 -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-5118329113135673~3617871065"/>
+            android:value="ca-app-pub-5118329113135673~3617871065" />
         <activity
             android:name=".swim.SwimGame"
             android:configChanges="keyboard|keyboardHidden|orientation"

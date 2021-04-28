@@ -2,6 +2,7 @@ package com.swimgame.base.realize;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -24,6 +25,8 @@ public abstract class AndroidGame extends Activity implements Game { // Акти
     Input input;                                        // Обработка поступающих событий от юзера
     Advertisement advertisement;                        // Работа с рекламой (AdMob)
     FileIO fileIO;                                      // Доступ к файловому вводу/выводу
+    SharedPreferences storageIO;
+
     Screen screen;                                      // Экраны переходов
     PowerManager.WakeLock wakeLock;                     // Чтобы экран не гаснул
 
@@ -48,6 +51,8 @@ public abstract class AndroidGame extends Activity implements Game { // Акти
         renderView = new AndroidFastRenderView(this, frameBuffer);
         graphics = new AndroidGraphics(getAssets(), frameBuffer);
         fileIO = new AndroidFileIO(getAssets());
+        storageIO = getSharedPreferences("common", MODE_PRIVATE);
+
         audio = new AndroidAudio(this);
         input = new AndroidInput(this, renderView, scaleX, scaleY);
         advertisement = new AndroidAdvertisement(this);
@@ -85,6 +90,10 @@ public abstract class AndroidGame extends Activity implements Game { // Акти
     @Override
     public FileIO getFileIO() {
         return fileIO;
+    }
+    @Override
+    public SharedPreferences getStorageIO() {
+        return storageIO;
     }
 
     @Override

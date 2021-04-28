@@ -8,9 +8,13 @@ package com.swimgame.base;
   4. а также чтения и записи файлов;
 */
 
+import android.content.SharedPreferences;
+
 public interface Game {
     public Input getInput();                    // Доступ к вх. потоку: получение реакции юзера
     public FileIO getFileIO();                  // Доступ к ФС: чтение и запись файлов
+    public SharedPreferences getStorageIO();    // Доступ к настройкам: чтение и запись
+
     public Graphics getGraphics();              // Доступ к Графике: прорисовка экрана
     public Audio getAudio();                    // Доступ к Звуку: воспроизведение звука
     public Advertisement getAdvertisement();    // Работа с рекламой (admob)

@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.File;
 
 /*    Реализация интерфейса FileIO: файловый ввод/вывод    */
-
 public class AndroidFileIO implements FileIO {
     AssetManager assets;
     String externalStoragePath;

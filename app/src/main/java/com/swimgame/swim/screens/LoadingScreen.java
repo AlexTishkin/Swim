@@ -8,7 +8,6 @@ import com.swimgame.swim.Assets;
 import com.swimgame.swim.Settings;
 
 // Загрузка необходимых ресурсов
-
 public class LoadingScreen extends Screen {
     public LoadingScreen(Game game) {
         super(game);
@@ -74,57 +73,66 @@ public class LoadingScreen extends Screen {
         // Главный герой - рыбка
         Assets.person = new Pixmap[6];
         Assets.person[0] = g.newPixmap("person/1.png", Graphics.PixmapFormat.ARGB4444);
-        Assets.person[1] = g.newPixmap("person/2.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.person[1] = g.newPixmap("person/2.png", Graphics.PixmapFormat.ARGB4444);
         Assets.person[2] = g.newPixmap("person/3.png", Graphics.PixmapFormat.ARGB4444);
-        Assets.person[3] = g.newPixmap("person/4.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.person[3] = g.newPixmap("person/4.png", Graphics.PixmapFormat.ARGB4444);
         Assets.person[4] = g.newPixmap("person/5.png", Graphics.PixmapFormat.ARGB4444);
-        Assets.person[5] = g.newPixmap("person/6.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.person[5] = g.newPixmap("person/6.png", Graphics.PixmapFormat.ARGB4444);
 
 
         Assets.enemyRed = new Pixmap[6];                                                                  // Враг
-        Assets.enemyRed[0] = g.newPixmap("enemyRed/1.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyRed[1] = g.newPixmap("enemyRed/2.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyRed[2] = g.newPixmap("enemyRed/3.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyRed[3] = g.newPixmap("enemyRed/4.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyRed[4] = g.newPixmap("enemyRed/5.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyRed[5] = g.newPixmap("enemyRed/6.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[0] = g.newPixmap("enemyRed/1.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[1] = g.newPixmap("enemyRed/2.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[2] = g.newPixmap("enemyRed/3.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[3] = g.newPixmap("enemyRed/4.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[4] = g.newPixmap("enemyRed/5.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyRed[5] = g.newPixmap("enemyRed/6.png", Graphics.PixmapFormat.ARGB4444);
 
         Assets.enemyGreen = new Pixmap[6];                                                                  // Враг
-        Assets.enemyGreen[0] = g.newPixmap("enemyGreen/1.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyGreen[1] = g.newPixmap("enemyGreen/2.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyGreen[2] = g.newPixmap("enemyGreen/3.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyGreen[3] = g.newPixmap("enemyGreen/4.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyGreen[4] = g.newPixmap("enemyGreen/5.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyGreen[5] = g.newPixmap("enemyGreen/6.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[0] = g.newPixmap("enemyGreen/1.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[1] = g.newPixmap("enemyGreen/2.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[2] = g.newPixmap("enemyGreen/3.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[3] = g.newPixmap("enemyGreen/4.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[4] = g.newPixmap("enemyGreen/5.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyGreen[5] = g.newPixmap("enemyGreen/6.png", Graphics.PixmapFormat.ARGB4444);
 
         Assets.enemyBlue = new Pixmap[6];                                                                  // Враг
-        Assets.enemyBlue[0] = g.newPixmap("enemyBlue/1.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyBlue[1] = g.newPixmap("enemyBlue/2.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyBlue[2] = g.newPixmap("enemyBlue/3.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyBlue[3] = g.newPixmap("enemyBlue/4.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyBlue[4] = g.newPixmap("enemyBlue/5.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemyBlue[5] = g.newPixmap("enemyBlue/6.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[0] = g.newPixmap("enemyBlue/1.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[1] = g.newPixmap("enemyBlue/2.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[2] = g.newPixmap("enemyBlue/3.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[3] = g.newPixmap("enemyBlue/4.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[4] = g.newPixmap("enemyBlue/5.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemyBlue[5] = g.newPixmap("enemyBlue/6.png", Graphics.PixmapFormat.ARGB4444);
 
         Assets.enemy2 = new Pixmap[6];                                                                  // Враг -> Акула
-        Assets.enemy2[0] = g.newPixmap("enemy2/1.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemy2[1] = g.newPixmap("enemy2/2.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemy2[2] = g.newPixmap("enemy2/3.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemy2[3] = g.newPixmap("enemy2/4.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemy2[4] = g.newPixmap("enemy2/5.png",Graphics.PixmapFormat.ARGB4444);
-        Assets.enemy2[5] = g.newPixmap("enemy2/6.png",Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[0] = g.newPixmap("enemy2/1.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[1] = g.newPixmap("enemy2/2.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[2] = g.newPixmap("enemy2/3.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[3] = g.newPixmap("enemy2/4.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[4] = g.newPixmap("enemy2/5.png", Graphics.PixmapFormat.ARGB4444);
+        Assets.enemy2[5] = g.newPixmap("enemy2/6.png", Graphics.PixmapFormat.ARGB4444);
 
-        Settings.load(game.getFileIO());                                                                // Загрузка настроек из файла
-        game.setScreen(new MainMenuScreen(game));                                                       // Переход в меню
+        // Загрузка настроек из файла
+        Settings.load(game.getStorageIO());
+        // Переход в меню
+        game.setScreen(new MainMenuScreen(game));
     }
 
     // Методы - заглушки
     @Override
-    public void present(float deltaTime) {}
+    public void present(float deltaTime) {
+    }
+
     @Override
-    public void pause() {}
+    public void pause() {
+    }
+
     @Override
-    public void resume() {}
+    public void resume() {
+    }
+
     @Override
-    public void dispose() {}
+    public void dispose() {
+    }
 
 }

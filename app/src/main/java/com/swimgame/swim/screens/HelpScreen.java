@@ -40,7 +40,7 @@ public class HelpScreen extends Screen {
             if (event.type == Input.TouchEvent.TOUCH_UP) {                                        // Если событие = UP, то продолжаем
                 if (inBounds(event, 400, 460, 172, 172)) {                                        // НАЖАТА КНОПКА: ВЫХОД В МЕНЮ
                     game.setScreen(new MainMenuScreen(game));                                     // Переход в меню
-                    Settings.save(game.getFileIO());                         // Сохраняем все настройки в файл
+                    Settings.save(game.getStorageIO());                         // Сохраняем все настройки в файл
                     if (Settings.soundEnabled) Assets.click.play(1);                              // Звук нажатия
                     return;
                 }
@@ -70,7 +70,7 @@ public class HelpScreen extends Screen {
     @Override
     public void pause() {
         if (Assets.menu_media != null) {                                                          // Остановка музыки(если играла)
-            Settings.save(game.getFileIO());                         // Сохраняем все настройки в файл
+            Settings.save(game.getStorageIO());                         // Сохраняем все настройки в файл
             if (Settings.soundEnabled) Assets.menu_media.stop();
         }
     }                                                                     // Остановка игры(Музыка)

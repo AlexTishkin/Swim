@@ -84,7 +84,7 @@ public class MainMenuScreen extends Screen {
     @Override
     public void pause() {
         if (Assets.menu_media != null) {
-            Settings.save(game.getFileIO());
+            Settings.save(game.getStorageIO());
             if (Settings.soundEnabled) Assets.menu_media.stop();
         }
     }

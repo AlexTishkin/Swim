@@ -1,5 +1,6 @@
 package com.swimgame.swim.screens;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 
 import com.swimgame.base.Advertisement;
@@ -100,7 +101,7 @@ public class GameScreen extends Screen {
                 // Выйти из игры
                 if (inBounds(event, 677, 300, 172, 172)) {
                     if (Settings.soundEnabled) Assets.click.play(1);
-                    Settings.save(game.getFileIO());
+                    Settings.save(game.getStorageIO());
                     System.exit(0);
                     return;
                 }
@@ -193,6 +194,11 @@ public class GameScreen extends Screen {
         // Если игра закончена, то к состоянию GameOver
         if (world.gameOver) {
             state = GameState.GameOver;
+
+            // Добавляем наши очки в таблицу рекордов
+            Settings.addScore(world.score.getScore());
+            // Сохраняем все настройки в файл
+            Settings.save(game.getStorageIO());
 
             // Реклама показывается если
             // - Больше 900 очков
@@ -412,7 +418,7 @@ public class GameScreen extends Screen {
             // Добавляем наши очки в таблицу рекордов
             Settings.addScore(world.score.getScore());
             // Сохраняем все настройки в файл
-            Settings.save(game.getFileIO());
+            Settings.save(game.getStorageIO());
         }
     }
 
