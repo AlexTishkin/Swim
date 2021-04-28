@@ -57,19 +57,23 @@ public class World {
                 onEnemyHandling();
                 onCoinHandling();
                 score.addScore();
-                // Увеличение скорости
-                if (score.getScore() > 800 && tick != 0.0055f)
-                    tick = 0.0055f;
-                if (score.getScore() > 2000 && tick != 0.0050f)
-                    tick = 0.0050f;
-                if (score.getScore() > 5000 && tick != 0.0045f)
-                    tick = 0.0045f;
-                if (score.getScore() > 10000 && tick != 0.0040f)
-                    tick = 0.0040f;
-                if (score.getScore() > 20000 && tick != 0.0035f)
-                    tick = 0.0035f;
+                increaseSpeedByScore(score.getScore());
             }
         }
+    }
+
+    // Увеличение скорости
+    private void increaseSpeedByScore(int score) {
+        if (score > 800 && tick != 0.0055f)
+            tick = 0.0055f;
+        if (score > 2000 && tick != 0.0050f)
+            tick = 0.0050f;
+        if (score > 5000 && tick != 0.0045f)
+            tick = 0.0045f;
+        if (score > 10000 && tick != 0.0040f)
+            tick = 0.0040f;
+        if (score > 20000 && tick != 0.0035f)
+            tick = 0.0035f;
     }
 
     // Обработка врагов (Анимация, Движение, Пересоздание)
