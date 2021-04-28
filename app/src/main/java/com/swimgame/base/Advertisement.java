@@ -13,4 +13,7 @@ public interface Advertisement {
 
     // Показать рекламу
     void showInterstitial();
+
+    // Показывать ли рекламу
+    boolean canShowAdvert();
 }

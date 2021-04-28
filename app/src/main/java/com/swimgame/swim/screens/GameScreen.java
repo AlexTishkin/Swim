@@ -193,8 +193,13 @@ public class GameScreen extends Screen {
         // Если игра закончена, то к состоянию GameOver
         if (world.gameOver) {
             state = GameState.GameOver;
+
+            // Реклама показывается если
+            // - Больше 900 очков
+            // - Раз в 3 раза до 900 очков
             Advertisement ad = game.getAdvertisement();
-            ad.showInterstitial();
+            if (world.score.getScore() > 900 || ad.canShowAdvert())
+                ad.showInterstitial();
         }
 
         // Если отличаются очки, обновить
